@@ -1,10 +1,19 @@
-export default function Results(children) {
+import { calculateInvestmentResults, formatter } from '../util/investment.js';
+ 
+export default function Results({ userInput}) {
+
+    const calculations = calculateInvestmentResults(userInput);
+
+    const initialInvestment = 
+    calculations[0].valueEndOfYear - 
+    calculations[0].annualInvestment - 
+    calculations[0].interest;
+
     return (
-        <div>
             <table id="result">
                 <thead id="thead">
                     <tr>
-                        <th scope="col">Year</th>
+                        <th scope="col">Years</th>
                         <th scope="col">Investment Value</th>
                         <th scope="col">Interest (Yearly)</th>
                         <th scope="col">Total Interest</th>
@@ -12,15 +21,20 @@ export default function Results(children) {
                     </tr>
                 </thead>
                 <tbody id="tbody">
-                    <tr>
-                        <td>2020</td>
-                        <td>1000</td>
-                        <td>10</td>
-                        <td>1000</td>
-                        <td>1000</td>
-                    </tr>
+                    {calculations.map( (yearData) => {
+                        
+                        const totalInterest = yearData.valueEndOfYear - yearData.annualInvestment * yearData.year - initialInvestment;
+                        const totalInvested = yearData.valueEndOfYear - totalInterest;
+                        return (
+                        <tr key={yearData.year}>
+                            <td>{yearData.year}</td>
+                            <td>{formatter.format(yearData.valueEndOfYear)}</td>
+                            <td>{formatter.format(yearData.interest)}</td>
+                            <td>{formatter.format(totalInterest)}</td>
+                            <td>{formatter.format(totalInvested)}</td>
+                        </tr>);
+                    })}
                 </tbody>
             </table>
-        </div> 
     )
 }
